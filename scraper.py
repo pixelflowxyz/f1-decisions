@@ -21,6 +21,8 @@ soup= BeautifulSoup(response.text, "html.parser")
 for link in soup.select("a[href$='.pdf']"):
     race = link['href'].split('/')[-1]
     race = race.split('-')[0]
+    if not "Grand Prix" in race:
+        continue
     year = race.split()[0]
     race_folder = folder_location + year + "/" + race
     year_folder = folder_location + year
@@ -31,8 +33,6 @@ for link in soup.select("a[href$='.pdf']"):
         os.mkdir(race_folder)
         logger.info(f"{race_folder} didn't exist until created")
     filename = os.path.join(race_folder,link['href'].split('/')[-1])
-    if not "Grand Prix" in filename:
-        continue
     if os.path.isfile(filename):
         logger.info(f"{filename} exists. Ignoring.")
     else:
