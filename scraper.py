@@ -6,7 +6,7 @@ from loguru import logger
 import sys
 
 logger.add(sys.stdout, colorize=True, format="<green>{time}</green> <level>{message}</level>", level="DEBUG")
-url = "https://www.fia.com/documents/season/season-2021-1108/championships/fia-formula-one-world-championship-14"
+url = "https://www.fia.com/documents/list/"
 
 # If folder doesn't exist, it will be created. You can change this if you want.
 folder_location = r'documents/'
@@ -17,7 +17,6 @@ if not os.path.exists(folder_location):
 response = requests.get(url)
 logger.debug(f"{url} downloaded")
 soup= BeautifulSoup(response.text, "html.parser")  
-
 
 for link in soup.select("a[href$='.pdf']"):
     race = link['href'].split('/')[-1]
@@ -32,6 +31,8 @@ for link in soup.select("a[href$='.pdf']"):
         os.mkdir(race_folder)
         logger.info(f"{race_folder} didn't exist until created")
     filename = os.path.join(race_folder,link['href'].split('/')[-1])
+    if not "Grand Prix" in filename:
+        continue
     if os.path.isfile(filename):
         logger.info(f"{filename} exists. Ignoring.")
     else:
